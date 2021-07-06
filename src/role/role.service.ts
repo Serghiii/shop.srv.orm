@@ -15,7 +15,7 @@ export class RoleService {
    }
 
    async getRole(name: string) {
-      const role = await this.roleRepository.findOne({ 'name': name });
+      const role = await this.roleRepository.findOneOrFail({ 'name': name });
       return role;
    }
 

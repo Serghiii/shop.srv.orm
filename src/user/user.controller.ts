@@ -1,40 +1,78 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { hasRole } from 'src/auth/role.decorator';
+import { Body, Controller, Get, Param, Post, Headers, Render, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { hasRole } from '../auth/role.decorator';
 import { UserDto } from './dto/user.dto';
 import { UserService } from './user.service';
 import { AddRoleDto } from './dto/add-role.dto';
-import { BanDto } from 'src/ban/dto/ban.dto';
+import { BanDto } from '../ban/dto/ban.dto';
+import { JwtService } from '@nestjs/jwt';
+import { ProfileDto } from 'src/profile/dto/profile.dto';
+import { ProfileService } from 'src/profile/profile.service';
 
 @Controller('user')
 export class UserController {
 
-   constructor(private readonly userService: UserService) { }
+   constructor(private readonly jwtServ: JwtService,
+      private readonly userService: UserService,
+      private readonly profileService: ProfileService) { }
+
+   @Get('/activate/:value')
+   @Render('registered') // підключення шаблонізатора
+   async activate(@Param('value') value: string) {
+      const res = await this.userService.activateUser(value);
+      return { mail: res.email, phone: res.phone }
+   }
 
    @hasRole("USER")
    @Get()
-   getAll() {
+   @UseInterceptors(ClassSerializerInterceptor) // виключити пароль із відповіді
+   async getAll() {
       return this.userService.getAllUsers();
    }
 
-   @Get('/activate/:value')
-   activate(@Param('value') value: string) {
-      return this.userService.activateUser(value);
+   @hasRole("USER")
+   @Post('/profile')
+   @UseInterceptors(ClassSerializerInterceptor) // виключити пароль із відповіді
+   async getUserProfile(@Headers('Authorization') auth: string) {
+      const { id } = await <any>this.jwtServ.decode(await auth.replace('Bearer', '').trim());
+      return this.userService.getUserProfileById(id);
+   }
+
+   @hasRole("USER")
+   @Post('/changepassword')
+   @UseInterceptors(ClassSerializerInterceptor) // виключити пароль із відповіді
+   async changePassword(@Headers('Authorization') auth: string, @Body() { password }) {
+      const { id } = await <any>this.jwtServ.decode(await auth.replace('Bearer', '').trim());
+      return this.userService.updateUserPassword(id, password);
+   }
+
+   @hasRole("USER")
+   @Post('/changeprofile')
+   async changeProfile(@Headers('Authorization') auth: string, @Body() profile: ProfileDto) {
+      const user: any = await this.jwtServ.decode(await auth.replace('Bearer', '').trim());
+      return this.profileService.updateProfile(user.profile.id, profile);
+   }
+
+   @hasRole("USER")
+   @Post('/changeavatar')
+   async changeAvatar(@Headers('Authorization') auth: string, @Body() profile: any) {
+      const user: any = await this.jwtServ.decode(await auth.replace('Bearer', '').trim());
+      return this.profileService.updateAvatar(user.profile.id, profile.avatar);
    }
 
    @Post()
-   create(@Body() userDto: UserDto) {
+   async create(@Body() userDto: UserDto) {
       return this.userService.createUser(userDto, 'USER');
    }
 
    @hasRole("ADMIN")
    @Post('/role')
-   addRole(@Body() dto: AddRoleDto) {
+   async addRole(@Body() dto: AddRoleDto) {
       return this.userService.addRole(dto);
    }
 
    @hasRole("ADMIN")
    @Post('/ban')
-   ban(@Body() dto: BanDto) {
+   async ban(@Body() dto: BanDto) {
       return this.userService.ban(dto);
    }
 

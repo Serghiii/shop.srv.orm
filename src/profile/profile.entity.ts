@@ -1,5 +1,5 @@
-import { User } from "src/user/user.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "../user/user.entity";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: "profiles" })
 export class Profile {
@@ -7,16 +7,17 @@ export class Profile {
    @PrimaryGeneratedColumn({ type: 'bigint' })
    id: number;
 
-   @Column({ type: 'varchar', nullable: false })
+   @Column({ type: 'varchar', length: 50 })
    name: string;
 
-   @Column({ type: 'boolean' })
-   gender: boolean;
+   @Column({ type: 'varchar', length: 1, nullable: true })
+   gender: string;
 
-   @Column({ type: 'varchar' })
+   @Column({ type: 'varchar', nullable: true })
    avatar: string;
 
-   @ManyToOne(() => User, user => user.profiles)
+   @OneToOne(() => User, user => user.profile, { onDelete: 'CASCADE' })
+   @JoinColumn()
    user: User;
 
 }

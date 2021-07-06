@@ -1,6 +1,6 @@
 import { Body, Controller, Post, Res, Request, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
-import { UserDto } from 'src/user/dto/user.dto';
+import { UserDto } from '../user/dto/user.dto';
 import { AuthService } from './auth.service';
 import { DoesUserExist } from './does-user-exist.guard';
 import { LoginDto } from './dto/login.dto';
@@ -18,13 +18,12 @@ export class AuthController {
       // const { token } = await this.authService.login(loginDto);
       // res.cookie('__t', token, { path: '/', httpOnly: true, signed: true });
       // return "Ok";
-      return this.authService.login(req.user);
+      return this.authService.login(req.user, loginDto.rememberme);
    }
 
    @UseGuards(DoesUserExist)
-   // @UseInterceptors(TransactionInterceptor)
    @Post('/register')
-   register(@Body() userDto: UserDto //, @TransactionParam() transaction: Transaction
+   register(@Body() userDto: UserDto
    ) {
       return this.authService.register(userDto);
    }

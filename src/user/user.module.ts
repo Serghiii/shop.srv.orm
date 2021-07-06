@@ -1,11 +1,11 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ActivationModule } from 'src/activation/activation.module';
-import { AuthModule } from 'src/auth/auth.module';
-import { BanModule } from 'src/ban/ban.module';
-import { MailModule } from 'src/mail/mail.module';
-// import { Role } from 'src/role/role.entity';
-import { RoleModule } from 'src/role/role.module';
+import { ProfileModule } from 'src/profile/profile.module';
+import { ActivationModule } from '../activation/activation.module';
+import { AuthModule } from '../auth/auth.module';
+import { BanModule } from '../ban/ban.module';
+import { MailModule } from '../mail/mail.module';
+import { RoleModule } from '../role/role.module';
 import { UserController } from './user.controller';
 import { User } from './user.entity';
 import { UserService } from './user.service';
@@ -14,6 +14,7 @@ import { UserService } from './user.service';
   imports: [
     TypeOrmModule.forFeature([User]),
     RoleModule,
+    ProfileModule,
     ActivationModule,
     BanModule,
     MailModule,

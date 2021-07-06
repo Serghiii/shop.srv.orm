@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Activation } from './activation.entityl';
+import { Activation } from './activation.entity';
 import { ActivationService } from './activation.service';
 
 @Module({

@@ -1,6 +1,7 @@
-import { Device } from "src/device/device.entity";
-import { Prop } from "src/prop/prop.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Product } from "../product/product.entity";
+import { Prop } from "../prop/prop.entity";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Category } from "src/category/category.entity";
 
 @Entity({ name: "types" })
 export class Type {
@@ -11,9 +12,11 @@ export class Type {
    @Column({ type: 'varchar', unique: true, nullable: false })
    name: string;
 
-   @OneToMany(() => Device, device => device.type)
-   devices: Device[];
+   @ManyToOne(() => Category, category => category.types)
+   category: Category;
 
+   @OneToMany(() => Product, product => product.type)
+   products: Product[];
 
    @OneToMany(() => Prop, prop => prop.type)
    props: Prop[];

@@ -1,6 +1,6 @@
 import { applyDecorators, SetMetadata, UseGuards } from "@nestjs/common";
-import { RoleGuard } from 'src/auth/role.guard';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RoleGuard } from '../auth/role.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 export const ROLE_KEY = 'roles';
 

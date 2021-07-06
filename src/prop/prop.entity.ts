@@ -1,4 +1,4 @@
-import { Type } from "src/type/type.entity";
+import { Type } from "../type/type.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: "props" })

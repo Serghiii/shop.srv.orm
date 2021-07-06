@@ -1,9 +1,10 @@
-import { Activation } from "src/activation/activation.entityl";
-import { Ban } from "src/ban/ban.entity";
-import { Basket } from "src/basket/basket.entity";
-import { Profile } from "src/profile/profile.entity";
-import { Role } from "src/role/role.entity";
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Activation } from "../activation/activation.entity";
+import { Ban } from "../ban/ban.entity";
+import { Cart } from "../cart/cart.entity";
+import { Profile } from "../profile/profile.entity";
+import { Role } from "../role/role.entity";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Exclude } from "class-transformer";
 
 @Entity({ name: "users" })
 export class User {
@@ -17,6 +18,7 @@ export class User {
    @Column({ type: 'varchar', length: 50, unique: true })
    email: string;
 
+   @Exclude()
    @Column({ type: 'varchar' })
    password: string;
 
@@ -36,13 +38,17 @@ export class User {
    @OneToOne(() => Activation, activation => activation.user)
    activation: Activation;
 
-   @OneToMany(() => Ban, ban => ban.user)
-   bans: Ban[];
+   @OneToOne(() => Profile, profile => profile.user)
+   profile: Profile;
 
-   @OneToMany(() => Profile, profile => profile.user)
-   profiles: Profile[];
+   @OneToOne(() => Cart, cart => cart.user)
+   cart: Cart;
 
-   @OneToOne(() => Basket, basket => basket.user)
-   basket: Basket;
+   @OneToOne(() => Ban, ban => ban.user)
+   ban: Ban;
+
+   constructor(partial: Partial<User>) {
+      Object.assign(this, partial);
+   }
 
 }

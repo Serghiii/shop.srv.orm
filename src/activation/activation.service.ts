@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Activation } from './activation.entityl';
+import { Activation } from './activation.entity';
 
 @Injectable()
 export class ActivationService {
